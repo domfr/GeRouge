@@ -1,11 +1,10 @@
 from nltk.stem import *
 from nltk import ngrams as ngram_splitter
-import ngram_probs as ngram_probs
+import data.ngram_probs as ngram_probs
 import re
 import string
 import os
 from somajo import Tokenizer, SentenceSplitter
-package_directory = os.path.dirname(os.path.abspath(__file__))
 
 
 class GeRouge:
@@ -34,19 +33,19 @@ class GeRouge:
         self.replace_chars = [('ss', 'ß'), ('ä', 'ae'), ('ü', 'ue'), ('ö', 'oe')]
 
         self.stop = set()
-        with open(package_directory + '/GermanST_utf8.txt', 'r', encoding = 'utf-8') as f:
+        with open('data/GermanST_utf8.txt', 'r', encoding = 'utf-8') as f:
             for line in f:
                 self.stop.add(line.strip())
         if not minimal_mode:
           self.smart_stop = set()
-          with open(package_directory + '/smart_stop.txt', 'r') as f:
+          with open('data/smart_stop.txt', 'r') as f:
               for line in f:
                   word = line.strip().lower()
                   self.smart_stop.add(word)
                   for replace_char in self.replace_chars:
                       word = word.replace(replace_char[0], replace_char[1])
           self.lemmas = {}
-          with open(package_directory + '/baseforms_by_projekt_deutscher_wortschatz.txt', 'r') as f:
+          with open('data/baseforms_by_projekt_deutscher_wortschatz.txt', 'r') as f:
               for line in f:
                   l = line.strip().split('\t')
                   l[0] = l[0].strip().lower()
