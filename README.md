@@ -1,1 +1,2 @@
 # GeRouge
+German ROUGE implementation
