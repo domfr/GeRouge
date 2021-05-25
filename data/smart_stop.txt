@@ -2,7 +2,7 @@ Reuters
 ap
 Jan
 Feb
-Mär
+MÃ¤r
 Apr
 Mai
 Jun
@@ -22,20 +22,20 @@ Do
 Fr
 Sa
 ein
-fähig
-über
-gemäß
+fÃ¤hig
+Ã¼ber
+gemÃ¤ÃŸ
 entsprechend
-gegenüber
-tatsächlich
+gegenÃ¼ber
+tatsÃ¤chlich
 nach
 danach
 nochmal
 gegen
 ist nicht
 alle
-ermöglichen
-ermöglicht
+ermÃ¶glichen
+ermÃ¶glicht
 fast
 allein
 bereits
@@ -59,7 +59,7 @@ etwas
 sowieso
 irgendwo
 erscheinen
-schätzen
+schÃ¤tzen
 angemessen
 sind
 nicht
@@ -67,10 +67,10 @@ etwa
 wie
 fragen
 fragend
-zusammenhängen
-angehören
+zusammenhÃ¤ngen
+angehÃ¶ren
 beim
-verfügbar
+verfÃ¼gbar
 weg
 schrecklich
 a
@@ -88,12 +88,12 @@ hinter
 glauben
 unten
 neben
-außerdem
+auÃŸerdem
 ausserdem
 beste
 besser
 zwischen
-darüber
+darÃ¼ber
 beide
 kurz
 aber
@@ -106,20 +106,20 @@ Ursache
 Ursachen
 sicher
 bestimmt
-Änderungen
+Ã„nderungen
 deutlich
 co
 com
 Kommen
 kommt
-über
+Ã¼ber
 Folglich
-Erwägen
+ErwÃ¤gen
 anbetracht
 enthalten
-enthält
-dazugehörigen
-könnte
+enthÃ¤lt
+dazugehÃ¶rigen
+kÃ¶nnte
 konnte
 kurs
 zeit
@@ -136,7 +136,7 @@ tun
 erledigt
 Nieder
 unten
-während
+wÃ¤hrend
 e
 jeder
 edu
@@ -148,7 +148,7 @@ entweder
 sonst
 anderswo
 genug
-vollständig
+vollstÃ¤ndig
 insbesondere
 et
 etc
@@ -159,23 +159,23 @@ jeden
 jeder
 jeder
 alles
-überall
+Ã¼berall
 Ex
 genau
 beispiel
-außer
+auÃŸer
 ausser
 f
 weit
 wenige
-fünfte
-fünf
+fÃ¼nfte
+fÃ¼nf
 gefolgt
 folgendes
 folgt
 zum
 ehemalige
-früher
+frÃ¼her
 her
 vier
 von
@@ -192,10 +192,10 @@ gehen
 weg
 bekam
 bekommen
-grüße
-grüsse
+grÃ¼ÃŸe
+grÃ¼sse
 h
-hätten
+hÃ¤tten
 hatte
 passiert
 kaum
@@ -224,7 +224,7 @@ Wie
 trotzdem
 jedoch
 ich
-Ich würde
+Ich wÃ¼rde
 krank
 Ich bin
 Ich habe
@@ -236,7 +236,7 @@ sofortig
 im
 insofern
 inc
-tatsächlich
+tatsÃ¤chlich
 zeigen
 angezeigt
 zeigt an
@@ -248,7 +248,7 @@ ich
 innere
 ist
 es
-würde
+wÃ¼rde
 wird
 selbst
 j
@@ -257,17 +257,17 @@ k
 kg
 kilo
 behalten
-hält
+hÃ¤lt
 gehalten
 kennt
-weiß
+weiÃŸ
 bekannt
 l
 dl
 cl
 letzter 
 Zeit
-später
+spÃ¤ter
 letztere
 zuletzt
 am wenigsten
@@ -275,7 +275,7 @@ Weniger
 damit nicht
 Lassen
 Lasst uns
-mögen
+mÃ¶gen
 gefallen
 wahrscheinlich
 wenig
@@ -290,17 +290,17 @@ cm
 mm
 km/h
 kmh
-hauptsächlich
+hauptsÃ¤chlich
 viele
 kann
-könnte
+kÃ¶nnte
 mich
 bedeuten
 inzwischen
 nur
 Macht
 Mehr
-Außerdem
+AuÃŸerdem
 die meisten
 meist
 Herr
@@ -310,8 +310,8 @@ Muss
 meine
 mich selber
 n
-nämlich
-Nähe
+nÃ¤mlich
+NÃ¤he
 fast
 notwendig
 brauchen
@@ -320,7 +320,7 @@ weder
 noch
 Dennoch
 Neu
-Nächster
+NÃ¤chster
 neun
 Nein
 niemand
@@ -338,7 +338,7 @@ O
 offensichtlich
 von
 aus
-häufig
+hÃ¤ufig
 Oh
 OK
 in Ordnung
@@ -358,8 +358,8 @@ unser
 unsere
 uns selbst
 aus
-draußen
-Über
+drauÃŸen
+Ãœber
 insgesamt
 besitzen
 p
@@ -370,7 +370,7 @@ vielleicht
 platziert
 Bitte
 Plus
-möglich
+mÃ¶glich
 vermutlich
 wahrscheinlich
 bietet
@@ -383,11 +383,11 @@ lieber
 rd
 Re
 wirklich
-vernünftig
-bezüglich
+vernÃ¼nftig
+bezÃ¼glich
 ungeachtet
-Grüße
-verhältnismäßig
+GrÃ¼ÃŸe
+verhÃ¤ltnismÃ¤ÃŸig
 beziehungsweise
 Recht
 s
@@ -469,18 +469,18 @@ deshalb
 darin
 daraufhin
 diese
-würden
+wÃ¼rden
 werden
 denken
 dritte
 Dies
-gründlich
-gründlich
+grÃ¼ndlich
+grÃ¼ndlich
 jene
 obwohl
 drei
 durch
-während
+wÃ¤hrend
 durch
 so
 zu
@@ -488,7 +488,7 @@ zusammen
 auch
 dauerte
 zu
-gegenüber
+gegenÃ¼ber
 versucht
 versucht
 wirklich
@@ -499,7 +499,7 @@ zwei
 u
 un
 unter
-Unglücklicherweise
+UnglÃ¼cklicherweise
 denn
 sei
 unwahrscheinlich
@@ -513,13 +513,13 @@ benutzt
 sinnvoll
 Verwendet
 verwenden
-gewöhnlich
+gewÃ¶hnlich
 v
 Wert
 verschiedene
 sehr
-über
-nämlich
+Ã¼ber
+nÃ¤mlich
 vs
 w
 wollen
@@ -555,7 +555,7 @@ worin
 worauf
 ob
 welche
-während
+wÃ¤hrend
 wohin
 Wer
 ganze
@@ -570,15 +570,15 @@ innerhalb
 ohne
 Gewohnheit
 Wunder
-würde
-würde
-würde nicht
+wÃ¼rde
+wÃ¼rde
+wÃ¼rde nicht
 x
 y
 Ja
 noch
 Sie
-du würdest
+du wÃ¼rdest
 du wirst
 du bist
 du hast

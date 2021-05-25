@@ -1,70 +1,77 @@
-from nltk.stem import *
-from nltk import ngrams as ngram_splitter
-import data.ngram_probs as ngram_probs
+import os
 import re
 import string
-import os
-from somajo import Tokenizer, SentenceSplitter
+import pathlib
+
+from nltk.stem import *
+from nltk import ngrams as ngram_splitter
+from somajo import SentenceSplitter, SoMaJo, Tokenizer
+
+from .data import ngram_probs
 
 
 class GeRouge:
     """
-    Class that computes ROUGE scores on German texts.
+    Computes ROUGE scores on German texts.
 
     Args:
-        alpha: Weighting factor of Recall and Precision.
+        alpha: Weighting factor of Recall and Precision. Between 0 and 1.
         stemming: Boolean. Defines whether stemming is used or not.
         split_compounds: Boolean. Defines whether compound words are split or not.
-        use_pos: Boolean. Defines whether only certain POS-tags are used to calculate ROUGE
-        minimal_mode: Boolean. Skip time consuming steps for quick calculation
+        minimal_mode: Boolean. Skip time consuming steps for quick calculation.
+                        TODO: specify what exactly is skipped.
     """
 
-    def __init__(self, alpha, stemming = True, split_compounds = True, minimal_mode = False):
-        self.tokenizer = Tokenizer(split_camel_case = True, token_classes = False, extra_info = False)
-        self.sentence_splitter = SentenceSplitter(is_tuple = False)
+    def __init__(self, alpha, stemming=True, split_compounds=True, minimal_mode=False):
+        self.tokenizer = SoMaJo('de_CMC')
+        # self.tokenizer = Tokenizer(split_camel_case = True, token_classes = False, extra_info = False)
+        self.sentence_splitter = SentenceSplitter(is_tuple=False)
         self.alpha = alpha
         self.stemming = stemming
         self.split_compounds = split_compounds
         self.stemmer = SnowballStemmer('german')
         self.minimal_mode = minimal_mode
+        self.base_path = pathlib.Path(__file__).parent.absolute()
 
         self.remove_chars = ['²', '³', '“', '„', ',', '†', '‚', '‘', '–']
         self.remove_chars.extend(list(string.punctuation))
         self.replace_chars = [('ss', 'ß'), ('ä', 'ae'), ('ü', 'ue'), ('ö', 'oe')]
 
         self.stop = set()
-        with open('data/GermanST_utf8.txt', 'r', encoding = 'utf-8') as f:
+        with open(os.path.join(self.base_path, 'data', 'GermanST_utf8.txt'), 'r') as f:
             for line in f:
                 self.stop.add(line.strip())
         if not minimal_mode:
-          self.smart_stop = set()
-          with open('data/smart_stop.txt', 'r') as f:
-              for line in f:
-                  word = line.strip().lower()
-                  self.smart_stop.add(word)
-                  for replace_char in self.replace_chars:
-                      word = word.replace(replace_char[0], replace_char[1])
-          self.lemmas = {}
-          with open('data/baseforms_by_projekt_deutscher_wortschatz.txt', 'r') as f:
-              for line in f:
-                  l = line.strip().split('\t')
-                  l[0] = l[0].strip().lower()
-                  l[1] = l[1].strip().lower()
-                  for replace_char in self.replace_chars:
-                      l[0] = l[0].replace(replace_char[0], replace_char[1])
-                      l[1] = l[1].replace(replace_char[0], replace_char[1])
-                  self.lemmas[l[0]] = l[1]
+            self.smart_stop = set()
+            with open(os.path.join(self.base_path, 'data', 'smart_stop.txt'), 'r') as f:
+                for line in f:
+                    word = line.strip().lower()
+                    self.smart_stop.add(word)
+                    for replace_char in self.replace_chars:
+                        word = word.replace(replace_char[0], replace_char[1])
+            self.lemmas = {}
+            with open(os.path.join(self.base_path, 'data', 'baseforms_by_projekt_deutscher_wortschatz.txt'), 'r') as f:
+                for line in f:
+                    l = line.strip().split('\t')
+                    l[0] = l[0].strip().lower()
+                    l[1] = l[1].strip().lower()
+                    for replace_char in self.replace_chars:
+                        l[0] = l[0].replace(replace_char[0], replace_char[1])
+                        l[1] = l[1].replace(replace_char[0], replace_char[1])
+                    self.lemmas[l[0]] = l[1]
 
     def tokenize_sents(self, text):
-        tokens = self.tokenizer.tokenize(text)
-        sents = self.sentence_splitter.split(tokens)
+        # SoMaJo now splits sentences simultaneously
+        sents = list(self.tokenizer.tokenize_text([text]))
+        length = sum([len(sent) for sent in sents])
         transformed_sents = [list(self.transform_sent(sent)) for sent in sents]
-        transformed_sents = [[token for token in sent if token is not None and token != ''] for sent in transformed_sents]
-        length = len(tokens)
+        transformed_sents = [[token for token in sent if token is not None and token != ''] for sent in
+                             transformed_sents]
 
         return transformed_sents, length
 
-    def create_ngrams(self, transformed_sents, n = 1):
+    @staticmethod
+    def create_ngrams(transformed_sents, n=1):
         ngrams_sents = [ngram_splitter(sent, n) for sent in transformed_sents if len(sent) >= n]
         ngrams = set([token for sent in ngrams_sents for token in sent])
 
@@ -72,23 +79,24 @@ class GeRouge:
 
     def transform_sent(self, sent):
         for token in sent:
-            token, splitted = self.transform_token(token, 'X')
+            token, splitted = self.transform_token(token.text)
             if splitted:
                 for partial_token in token:
                     yield partial_token
             else:
                 yield token
 
-    def transform_token(self, token, pos):
+    def transform_token(self, token):
         if not self.minimal_mode and token.lower().strip() in self.lemmas:
             token = self.lemmas[token.lower().strip()]
 
         compound_candidates = self.split_compound(token)
-        if self.split_compounds and compound_candidates is not None and compound_candidates[0][0] > 0.5 and compound_candidates[0][1] != token:
+        if self.split_compounds and compound_candidates is not None and compound_candidates[0][0] > 0.5 and \
+                compound_candidates[0][1] != token:
             return_tokens = []
             for token in compound_candidates[0][1:]:
                 if len(token) > 0:
-                    tokens, splitted = self.transform_token(token, 'inner')
+                    tokens, splitted = self.transform_token(token)
                     if splitted:
                         return_tokens.extend(tokens)
                     else:
@@ -113,7 +121,7 @@ class GeRouge:
 
             return token, False
 
-    def rouge_n(self, reference, summary, ngrams = [1, 2]):
+    def rouge_n(self, reference, summary, ngrams=(1, 2)):
         reference_tokenized, reference_length = self.tokenize_sents(reference)
         summary_tokenized, summary_length = self.tokenize_sents(summary)
         return self.rouge_n_partial(reference_tokenized, reference_length, summary_tokenized, summary_length, ngrams)
@@ -131,14 +139,15 @@ class GeRouge:
                 rougen.append((0, 0, 0))
                 continue
 
-            reference = self.create_ngrams(reference_tokenized, n = n)
-            summary = self.create_ngrams(summary_tokenized, n = n)
+            reference = self.create_ngrams(reference_tokenized, n=n)
+            summary = self.create_ngrams(summary_tokenized, n=n)
 
             if len(reference) == 0 or len(summary) == 0:
                 rougen.append((0, 0, 0))
                 continue
 
-            matches = sum([sum([ngram_reference == ngram_summary for ngram_summary in summary]) for ngram_reference in reference])
+            matches = sum(
+                [sum([ngram_reference == ngram_summary for ngram_summary in summary]) for ngram_reference in reference])
             rouge_p = matches / len(summary)
             rouge_r = matches / len(reference)
             denominator = ((rouge_r * self.alpha) + (rouge_p * (1 - self.alpha)))
@@ -177,9 +186,10 @@ class GeRouge:
 
         return rouge
 
-    def split_compound(self, word: str):
+    @staticmethod
+    def split_compound(word: str):
         """
-        code adapted from: https://github.com/dtuggener/CharSplit
+        Code adapted from: https://github.com/dtuggener/CharSplit
         Return list of possible splits, best first
         :param word: Word to be split
         :return: List of all splits
@@ -236,10 +246,10 @@ class GeRouge:
             score = start_slice_prob - in_slice_prob + pre_slice_prob
             scores.append([score, word[:n].title(), word[n:].title()])
 
-        scores.sort(reverse = True)
+        scores.sort(reverse=True)
         if scores == []:
             scores = [[0, word.title(), word.title()]]
-        return sorted(scores, reverse = True)
+        return sorted(scores, reverse=True)
 
     @staticmethod
     def lcs(a, b):
@@ -251,7 +261,6 @@ class GeRouge:
                 word2 = b[i]
                 if word1 == word2:
                     lcsWords.append(word2)
-                    start = i + 1;
+                    start = i + 1
 
         return lcsWords
-
