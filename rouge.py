@@ -3,9 +3,9 @@ import re
 import string
 import pathlib
 
-from nltk.stem import *
+from nltk.stem import SnowballStemmer
 from nltk import ngrams as ngram_splitter
-from somajo import SentenceSplitter, SoMaJo, Tokenizer
+from somajo import SentenceSplitter, SoMaJo
 
 from .data import ngram_probs
 
@@ -24,7 +24,6 @@ class GeRouge:
 
     def __init__(self, alpha, stemming=True, split_compounds=True, minimal_mode=False):
         self.tokenizer = SoMaJo('de_CMC')
-        # self.tokenizer = Tokenizer(split_camel_case = True, token_classes = False, extra_info = False)
         self.sentence_splitter = SentenceSplitter(is_tuple=False)
         self.alpha = alpha
         self.stemming = stemming
@@ -122,42 +121,55 @@ class GeRouge:
             return token, False
 
     def rouge_n(self, reference, summary, ngrams=(1, 2)):
+        """
+        Computes Rouge-N scores based on n-grams.
+        :param reference: Ground truth summary.
+        :param summary: Generated prediction summary.
+        :param ngrams: For which n-grams to calculate scores. Can be arbitrarily many.
+        :return: List of (precision, recall, F1) tuples for each individual n-gram length.
+        """
         reference_tokenized, reference_length = self.tokenize_sents(reference)
         summary_tokenized, summary_length = self.tokenize_sents(summary)
-        return self.rouge_n_partial(reference_tokenized, reference_length, summary_tokenized, summary_length, ngrams)
+        return self.rouge_n_partial(reference_tokenized, summary_tokenized, ngrams)
 
     def rouge_l(self, reference, summary):
+        """
+        Calculates Rouge-L based on the longest common sub-sequence.
+        :param reference: Ground truth summary.
+        :param summary: Generated prediction summary.
+        :return: Tuple with (precision, recall, F1) values for Rouge-L.
+        """
         reference_tokenized, _ = self.tokenize_sents(reference)
         summary_tokenized, _ = self.tokenize_sents(summary)
         return self.computeL(summary_tokenized, reference_tokenized)
 
-    def rouge_n_partial(self, reference_tokenized, reference_length, summary_tokenized, summary_length, ngrams):
-        rougen = []
+    def rouge_n_partial(self, reference_tokenized, summary_tokenized, ngrams):
+        rouge_n = []
 
         for n in ngrams:
             if n < 1:
-                rougen.append((0, 0, 0))
+                rouge_n.append((0, 0, 0))
                 continue
 
             reference = self.create_ngrams(reference_tokenized, n=n)
             summary = self.create_ngrams(summary_tokenized, n=n)
 
             if len(reference) == 0 or len(summary) == 0:
-                rougen.append((0, 0, 0))
+                rouge_n.append((0, 0, 0))
                 continue
 
             matches = sum(
                 [sum([ngram_reference == ngram_summary for ngram_summary in summary]) for ngram_reference in reference])
             rouge_p = matches / len(summary)
             rouge_r = matches / len(reference)
-            denominator = ((rouge_r * self.alpha) + (rouge_p * (1 - self.alpha)))
+            denominator = (rouge_r * self.alpha) + (rouge_p * (1 - self.alpha))
             if denominator != 0:
-                rouge = (rouge_p * rouge_r) / denominator
+                rouge_f1 = (rouge_p * rouge_r) / denominator
             else:
-                rouge = 0.0
-            rougen.append((rouge, rouge_r, rouge_p))
+                rouge_f1 = 0.0
+            rouge_n.append((rouge_p, rouge_r, rouge_f1))
 
-        return rougen, reference_length, summary_length
+        return rouge_n
 
     def computeL(self, sys, ref):
         unionLCS = set()
@@ -178,13 +190,13 @@ class GeRouge:
             rouge_p = len(unionLCS) / sys_size
         else:
             rouge_p = 0
-        denominator = ((rouge_r * self.alpha) + (rouge_p * (1 - self.alpha)))
+        denominator = (rouge_r * self.alpha) + (rouge_p * (1 - self.alpha))
         if denominator != 0:
-            rouge = (rouge_p * rouge_r) / denominator
+            rouge_f1 = (rouge_p * rouge_r) / denominator
         else:
-            rouge = 0.0
+            rouge_f1 = 0.0
 
-        return rouge
+        return rouge_p, rouge_r, rouge_f1
 
     @staticmethod
     def split_compound(word: str):
